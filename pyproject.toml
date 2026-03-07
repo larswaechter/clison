@@ -1,0 +1,13 @@
+[project]
+name = "clison"
+version = "0.1.0"
+description = "CLI for beautifully printing JSON data in terminal."
+authors = [{name="Lars Wächter"}]
+dependencies = ["click"]
+
+[project.scripts]
+clison = "clison.cli:cli"
+
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
