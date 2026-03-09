@@ -1,11 +1,11 @@
 import click
-import sys
 import json
 import shutil
 
 from clison.utils import read_json
 
 COL_PADDING = 2
+TOTAL_COL_PADDING = 2 * COL_PADDING
 
 @click.command(name="print")
 @click.option('-f', '--file', type=click.Path(exists=True), help="Path to JSON file")
@@ -13,7 +13,7 @@ def print_json(file):
     data = read_json(file)
 
     if isinstance(data, dict):
-        click.echo("Received a JSON object.")
+        data = [data] # Convert to list for uniform processing
     elif isinstance(data, list):
         if(len(data) == 0):
             return
@@ -31,6 +31,7 @@ def print_json(file):
 
 def get_terminal_width():
     """Get the width of the terminal."""
+    # return 40
     return shutil.get_terminal_size((80, 20)).columns
 
 def calculate_column_widths(rows):
@@ -56,15 +57,30 @@ def calculate_column_widths(rows):
 
 def print_row(row, col_widths):
 
+    # Only white space in row, break recursion
+    if all(len(str(row[col]).strip()) == 0 for col in row):
+        return
+
+    overflow_row = {}
+
     for col in row:
-        cell = row[col]
         max_width = col_widths[col]
 
+        cell = str(row[col])
+        cell_compressed = cell[:max_width - COL_PADDING]
+
         click.echo(" " * COL_PADDING, nl=False)
-        click.echo(cell, nl=False)
-        click.echo(" " * (max_width - COL_PADDING - len(str(cell))), nl=False)
+        click.echo(cell_compressed, nl=False)
+        click.echo(" " * (max_width - COL_PADDING - len(cell_compressed)), nl=False)
+
+        if len(cell) > max_width:
+            overflow_row[col] = cell[max_width:] # Store overflow for next row
+        else:
+            overflow_row[col] = " " * max_width # Fill with spaces to maintain alignment
 
     click.echo("")
 
+    return print_row(overflow_row, col_widths)
+
 def get_cell_width(cell):
-    return len(str(cell)) + 2 * COL_PADDING
+    return len(str(cell)) + TOTAL_COL_PADDING
