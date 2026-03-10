@@ -2,7 +2,7 @@
 
 CLI for beautifully printing JSON data in terminal.
 
-<img src="https://github.com/larswaechter/clison/blob/main/preview.png?raw=true" width="80%">
+<img src="https://github.com/larswaechter/clison/blob/main/preview.png?raw=true" width="70%">
 
 ## 📍 Introduction
 
@@ -24,4 +24,10 @@ or provide JSON from file:
 
 ```bash
  python -m clison.cli -f ./example.json
+```
+
+Another example using cURL:
+
+```bash
+curl -X GET "https://dummyjson.com/posts" | python -m clison.cli -p "$.posts"
 ```
