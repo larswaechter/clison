@@ -75,8 +75,7 @@ def print_row(row, col_widths):
     if all(len(str(row[col]).strip()) == 0 for col in row):
         return
 
-    overflow_row = {}
-
+    row_overflow = {}
     for col in row:
         max_width = col_widths[col]
 
@@ -88,17 +87,13 @@ def print_row(row, col_widths):
         click.echo(" " * (max_width - COL_PADDING - len(cell_fitted)), nl=False)
 
         if len(cell) > max_width:
-
-            if col == "id":
-                print(cell, max_width)
-
-            overflow_row[col] = cell[max_width - TOTAL_COL_PADDING:] # Store overflow for next row
+            row_overflow[col] = cell[max_width - TOTAL_COL_PADDING:] # Store overflow for next row
         else:
-            overflow_row[col] = " " * max_width # Fill with spaces to maintain alignment
+            row_overflow[col] = " " * max_width # Fill with spaces to maintain alignment
 
     click.echo("")
 
-    return print_row(overflow_row, col_widths)
+    return print_row(row_overflow, col_widths)
 
 def get_cell_width(cell):
     return len(str(cell)) + TOTAL_COL_PADDING
